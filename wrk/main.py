@@ -8,28 +8,30 @@ import contextlib
 import requests
 import sys
 from io import StringIO
-from tzlocal import get_localzone   #pip3 install tzlocal
 from datetime import datetime
 from urllib.parse import urlparse
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 from apscheduler.schedulers.blocking import BlockingScheduler   #pip3 install apscheduler
+from tzlocal import get_localzone                               #pip3 install tzlocal
 from Log4Me import Log4Me
 from ConsoleTitle import ConsoleTitle
 from KeyManager import KeyManager
 
-key_manager = KeyManager()
-schedule_interval = 5
-force_to_update = 0
-ip_details = []
+# Constants
+SCHEDULE_INTERVAL = 5
+FORCE_TO_UPDATE = 0
+CONTEXT = ssl.create_default_context(cafile=certifi.where())
+
+# Configuration
 API_ENDPOINT = ''
 DNS_RESOLVER1 = ''
 DNS_RESOLVER2 = ''
-dyndns_username = ''
-dyndns_updater_key = ''
+DYNDNS_USERNAME = ''
+DYNDNS_UPDATER_KEY = ''
 HOSTNAME = ''
 
-CONTEXT = ssl.create_default_context(cafile=certifi.where())
+key_manager = KeyManager()
 
 
 def init_config(file):
@@ -205,14 +207,14 @@ def process_dyndns_update(force_update:bool = False):
 
 
 if __name__ == '__main__':
-    ConsoleTitle.show_title('DynIPUpdater', False, 50)
+    ConsoleTitle.show_title('DynDNS_Updater', False, 50)
 
     parse = argparse.ArgumentParser()
     parse.add_argument('--run-now', action="store_true", )
     parse.add_argument('--interval', type=str, required=False, default=schedule_interval, )
     parse.add_argument('--force', action="store_true", )
-    parse.add_argument('--check-only', action="store_true", )
-    parse.add_argument('--set-key', action="store_true", )
+    parse.add_argument('--status', action="store_true", )
+    parse.add_argument('--setup', action="store_true", )
     parse.add_argument('--debug', action="store_true", )
     args = parse.parse_args()
 
@@ -223,28 +225,25 @@ if __name__ == '__main__':
 
     init_config('main.config')
 
-    run_now = args.run_now
     input_interval = str(args.interval)
-    force_to_update = args.force
-    check_only = args.check_only
 
     if input_interval.isnumeric():
         schedule_interval = int(input_interval)
 
     logging.debug(f'{args}')
 
-    if args.set_key:
+    if args.setup:
         set_key_store()
     else:
         ip_details = get_ip_information()
 
-    if run_now == 1:
-        if force_to_update == 1:
-            process_dyndns_update(True)
+    if args.run_now:
+        if args.force:
+            process_dyndns_update(force_update=True)
         else:
             process_dyndns_update()
 
-    if check_only == 1:
+    if args.status:
         current_time = datetime.now().strftime('%Y-%d-%m %H:%M:%S')
         check_only_result = f"[check_only] {current_time} DynDNS: {ip_details['DynDNS_IP']}, "  \
                             f"DNS_RESOLVER1: {ip_details['DNS_RESOLVER1']} ({urlparse(DNS_RESOLVER1).netloc}), " \

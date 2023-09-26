@@ -14,6 +14,7 @@ RUN mkdir -p /app/$FOLDER_NAME
 RUN pip install cryptography
 RUN pip install apscheduler
 RUN pip install requests
+RUN pip install tzlocal
 
 COPY ./wrk/*.py /app/$FOLDER_NAME/
 COPY ./wrk/*.config /app/$FOLDER_NAME/
