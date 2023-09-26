@@ -23,7 +23,7 @@ Before running the script, make sure you have the following dependencies install
 
 ## Configuration
 
-Edit the `dockerfile` file with your desired dyndns domain and review the time-zone.
+Edit the `dockerfile` file to review time-zone for the docker.
 
 ```bash
 - ENV TZ="Hongkong"
@@ -44,17 +44,25 @@ python DockerCtrl.py --build-image
 ### First time running
 Pre-storing login credentials and hostname in an encoded file named `Token.key` under the Docker for updating the latest Public IP on dyndns.org.
 
+**Using `DockerCtrl.py` to set up the environment.**
 ```bash
-#Using `DockerCtrl.py` to setup for first time.
-python DockerCtrl.py --setup
-
-#Direct run python script `main.py`.
 python DockerCtrl.py --setup
 ```
 
-In fact, `DockerCtrl.py` can also manage the image.
+**Using Docker command to set up the environment.**
+```bash
+docker run -it --name dyndns_updater dyndns_updater python main.py --setup
+```
+
+**Direct run python script `main.py` to set up the environment.**
+```bash
+python DockerCtrl.py --setup
+```
 
 ### Command-line Arguments
+
+In fact, `DockerCtrl.py` can also manage the image.
+
 - `--build-image`: Build the Docker image.
 - `--remove-image`: Remove the Docker image and its associated container.
 - `--start`: Start the Docker container.
@@ -66,6 +74,7 @@ In fact, `DockerCtrl.py` can also manage the image.
 - `--setup`: Set up the Docker container with the specified configuration.
 
 ### Examples
+
 ```bash
 #Start Docker Container
 python DockerCtrl.py --start
