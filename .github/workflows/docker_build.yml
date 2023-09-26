@@ -20,7 +20,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t username/repository-name:${{ github.sha }} --build-arg FOLDER_NAME=dyndns_updater .
+        run: docker build -t william1760/dyndns_updater:${{ github.sha }} --build-arg FOLDER_NAME=dyndns_updater .
 
       - name: Push Docker image
-        run: docker push username/repository-name:${{ github.sha }}
+        run: docker push william1760/dyndns_updater:${{ github.sha }}
