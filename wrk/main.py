@@ -1,3 +1,4 @@
+import sys
 import ssl
 import base64
 import certifi
@@ -6,7 +7,6 @@ import logging
 import argparse
 import contextlib
 import requests
-import sys
 from io import StringIO
 from datetime import datetime
 from urllib.parse import urlparse
@@ -21,17 +21,17 @@ from KeyManager import KeyManager
 # Constants
 SCHEDULE_INTERVAL = 5
 FORCE_TO_UPDATE = 0
+DYNDNS_USERNAME = "DynDNS_Updater_USERNAME"
+DYNDNS_UPDATER_KEY = "DynDNS_Updater_KEY"
+DYNDNS_HOST = "DynDNS_Updater_HOSTNAME"
 CONTEXT = ssl.create_default_context(cafile=certifi.where())
 
 # Configuration
 API_ENDPOINT = ''
 DNS_RESOLVER1 = ''
 DNS_RESOLVER2 = ''
-DYNDNS_USERNAME = ''
-DYNDNS_UPDATER_KEY = ''
 HOSTNAME = ''
 ip_details = []
-
 
 key_manager = KeyManager()
 
@@ -64,17 +64,14 @@ def init_config(file):
                 DNS_RESOLVER1 = value.strip('"')
             elif key == 'DNS_RESOLVER2':
                 DNS_RESOLVER2 = value.strip('"')
-            elif key == 'HOSTNAME':
-                HOSTNAME = value.strip('"')
-            elif key == 'DYNDNS_USERNAME':
-                DYNDNS_USERNAME = value.strip('"')
-            elif key == 'DYNDNS_UPDATER_KEY':
-                DYNDNS_UPDATER_KEY = value.strip('"')
             elif key == 'SCHEDULE_INTERVAL':
                 interval = value.strip('"')
                 SCHEDULE_INTERVAL = int(interval) if interval.isnumeric() else SCHEDULE_INTERVAL
         except ValueError:
             print(f"[init_config] Error processing line: {line}")
+
+    if key_manager.exists(DYNDNS_HOST):
+        HOSTNAME = key_manager.get(DYNDNS_HOST)
 
     # Print the variables with colored text
     variable = (f'[init_config] Variable: '
@@ -82,9 +79,7 @@ def init_config(file):
                 f'DNS_RESOLVER1 = {DNS_RESOLVER1} | '
                 f'DNS_RESOLVER2 = {DNS_RESOLVER2} | '
                 f'HOSTNAME = {HOSTNAME} | '
-                f'SCHEDULE_INTERVAL = {SCHEDULE_INTERVAL} | '
-                f'dyndns_username = {DYNDNS_USERNAME} | '
-                f'dyndns_updater_key = {DYNDNS_UPDATER_KEY}')
+                f'SCHEDULE_INTERVAL = {SCHEDULE_INTERVAL}')
 
     logging.debug(variable)
 
@@ -135,10 +130,11 @@ def set_key_store():
     msg = f'[set_key_store] Set the key store:'
     print(f'{msg}')
 
-    username =  key_manager.update(DYNDNS_USERNAME) if key_manager.exists(DYNDNS_USERNAME) else key_manager.add(DYNDNS_USERNAME)
-    update_key =  key_manager.update(DYNDNS_UPDATER_KEY) if key_manager.exists(DYNDNS_UPDATER_KEY) else key_manager.add(DYNDNS_UPDATER_KEY)
+    hostname = key_manager.update(DYNDNS_HOST) if key_manager.exists(DYNDNS_HOST) else key_manager.add(DYNDNS_HOST)
+    username = key_manager.update(DYNDNS_USERNAME) if key_manager.exists(DYNDNS_USERNAME) else key_manager.add(DYNDNS_USERNAME)
+    update_key = key_manager.update(DYNDNS_UPDATER_KEY) if key_manager.exists(DYNDNS_UPDATER_KEY) else key_manager.add(DYNDNS_UPDATER_KEY)
 
-    if not username == '' and not update_key == '':
+    if not username == '' and not update_key == '' and not hostname == '':
         print('[set_key_store] Key Store is ready.')
     else:
         print('[set_key_store] Something wrong with Key Store.')
@@ -230,20 +226,14 @@ if __name__ == '__main__':
     else:
         Log4Me.init_logging(log_to_file=False)
 
+    logging.debug(f'[main] ArgumentParser: {args}')
     init_config('main.config')
 
-    input_interval = str(args.interval)
-
-    if input_interval.isnumeric():
-        schedule_interval = int(input_interval)
+    if str(args.interval).isnumeric():
+        schedule_interval = int(args.interval)
 
     if args.hostname:
         HOSTNAME = args.hostname
-        print(f'{HOSTNAME}')
-    else:
-        print(f'no update {HOSTNAME}')
-
-    logging.debug(f'{args}')
 
     if args.setup:
         set_key_store()
