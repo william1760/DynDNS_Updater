@@ -282,6 +282,7 @@ def docker_start(interactive:bool = False, retry_count = 10, manual_cmd:str = ''
         print(f'{text_color_white}[docker_start]{text_color_reset} Image: '
               f'\'{text_color_blue}{docker_image}{text_color_reset}\' is {text_color_red}not exist.{text_color_reset}')
 
+
 def attaching():
     current_container = container_exist()
     current_status = ''
@@ -309,26 +310,6 @@ def attaching():
             print(f'{text_color_white}[attaching]{text_color_reset} Container: '
                   f'\'{text_color_blue}{docker_image}{text_color_reset}\' is {text_color_red}not running.{text_color_reset}')
 
-    # if not current_container is None:
-    #     if current_container.status == 'running':
-    #         interactive_session(InteractMode.ATTACHING)
-    #     else:
-    #         if manual_cmd:
-    #             docker_start(interactive=False)
-    #             interactive_session(InteractMode.ATTACHING)
-    #         else:
-    #             print(f'{text_color_white}[attaching]{text_color_reset} Container: '
-    #                   f'\'{text_color_blue}{docker_image}{text_color_reset}\' is {text_color_red}not running.{text_color_reset}')
-    # else:
-    #     if manual_cmd:
-    #         docker_start(interactive=False)
-    #         interactive_session(InteractMode.ATTACHING)
-    #     else:
-    #         print(f'{text_color_white}[attaching]{text_color_reset} Container: '
-    #               f'\'{text_color_blue}{docker_image}{text_color_reset}\' is {text_color_red}not created.{text_color_reset}.')
-    #
-    #     docker_start(interactive=False)
-    #     interactive_session(InteractMode.ATTACHING)
 
 def docker_status():
     session_status = None
@@ -360,7 +341,6 @@ def docker_status():
           f'Image: {text_color_blue}{status_image_name}{text_color_reset} (IMAGE ID: {text_color_yellow}{status_image_id}{text_color_reset}), '
           f'Container: {text_color_blue}{status_container_name}{text_color_reset} (CONTAINER ID: {text_color_yellow}{status_container_id}{text_color_reset}), '
           f'Status: {session_status}')
-
 
 
 if __name__ == '__main__':
