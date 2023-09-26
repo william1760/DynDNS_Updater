@@ -110,4 +110,7 @@ python main.py --status
 
 # Set up and manage authentication keys
 python main.py --setup
+
+# Set hostname
+python main.py --hostname **your_adhoc_domain.dyndns.org**
 ```
