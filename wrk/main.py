@@ -30,13 +30,15 @@ DNS_RESOLVER2 = ''
 DYNDNS_USERNAME = ''
 DYNDNS_UPDATER_KEY = ''
 HOSTNAME = ''
+ip_details = []
+
 
 key_manager = KeyManager()
 
 
 def init_config(file):
     global API_ENDPOINT, DNS_RESOLVER1, DNS_RESOLVER2, HOSTNAME
-    global dyndns_username, dyndns_updater_key
+    global DYNDNS_USERNAME, DYNDNS_UPDATER_KEY
 
     config_file = file
 
@@ -65,9 +67,9 @@ def init_config(file):
             elif key == 'HOSTNAME':
                 HOSTNAME = value.strip('"')
             elif key == 'DYNDNS_USERNAME':
-                dyndns_username = value.strip('"')
+                DYNDNS_USERNAME = value.strip('"')
             elif key == 'DYNDNS_UPDATER_KEY':
-                dyndns_updater_key = value.strip('"')
+                DYNDNS_UPDATER_KEY = value.strip('"')
         except ValueError:
             print(f"Error processing line: {line}")
 
@@ -77,8 +79,8 @@ def init_config(file):
                 f'DNS_RESOLVER1 = {DNS_RESOLVER1} | '
                 f'DNS_RESOLVER2 = {DNS_RESOLVER2} | '
                 f'HOSTNAME = {HOSTNAME} | '
-                f'dyndns_username = {dyndns_username} | '
-                f'dyndns_updater_key = {dyndns_updater_key}')
+                f'dyndns_username = {DYNDNS_USERNAME} | '
+                f'dyndns_updater_key = {DYNDNS_UPDATER_KEY}')
 
     logging.debug(variable)
 
@@ -113,13 +115,13 @@ def get_dyn_dns_ip():
 
 def get_key_store(key_name):
     global key_manager
-    
+
     if key_manager.exists(key_name):
         api_token = key_manager.get(key_name)
     else:
         key_manager.add(key_name)
         api_token = key_manager.get(key_name)
-        
+
     return api_token
 
 
@@ -129,8 +131,8 @@ def set_key_store():
     msg = f'[set_key_store] Set the key store:'
     print(f'{msg}')
 
-    username =  key_manager.update(dyndns_username) if key_manager.exists(dyndns_username) else key_manager.add(dyndns_username)
-    update_key =  key_manager.update(dyndns_updater_key) if key_manager.exists(dyndns_updater_key) else key_manager.add(dyndns_updater_key)
+    username =  key_manager.update(DYNDNS_USERNAME) if key_manager.exists(DYNDNS_USERNAME) else key_manager.add(DYNDNS_USERNAME)
+    update_key =  key_manager.update(DYNDNS_UPDATER_KEY) if key_manager.exists(DYNDNS_UPDATER_KEY) else key_manager.add(DYNDNS_UPDATER_KEY)
 
     if not username == '' and not update_key == '':
         print('[set_key_store] Key Store is ready.')
@@ -139,10 +141,10 @@ def set_key_store():
 
 
 def update_dyndns(ip_address):
-    global dyndns_username, dyndns_updater_key
+    global DYNDNS_USERNAME, DYNDNS_UPDATER_KEY
 
-    username = get_key_store(dyndns_username)
-    updater_key = get_key_store(dyndns_updater_key)
+    username = get_key_store(DYNDNS_USERNAME)
+    updater_key = get_key_store(DYNDNS_UPDATER_KEY)
 
     url = f"{API_ENDPOINT}?hostname={HOSTNAME}&myip={ip_address}"
     logging.info(f'[update_dyndns] URL: {url}')
@@ -211,7 +213,7 @@ if __name__ == '__main__':
 
     parse = argparse.ArgumentParser()
     parse.add_argument('--run-now', action="store_true", )
-    parse.add_argument('--interval', type=str, required=False, default=schedule_interval, )
+    parse.add_argument('--interval', type=str, required=False, default=SCHEDULE_INTERVAL, )
     parse.add_argument('--force', action="store_true", )
     parse.add_argument('--status', action="store_true", )
     parse.add_argument('--setup', action="store_true", )
@@ -253,7 +255,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) == 1:
         scheduler = BlockingScheduler(timezone=get_localzone())
-        scheduler.add_job(process_dyndns_update, 'interval', minutes=schedule_interval)
+        scheduler.add_job(process_dyndns_update, 'interval', minutes=SCHEDULE_INTERVAL)
 
         # Capture the print_jobs() output into a string
         with contextlib.redirect_stdout(StringIO()) as buffer:
