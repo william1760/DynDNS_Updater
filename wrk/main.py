@@ -37,7 +37,7 @@ key_manager = KeyManager()
 
 
 def init_config(file):
-    global API_ENDPOINT, DNS_RESOLVER1, DNS_RESOLVER2, HOSTNAME
+    global API_ENDPOINT, DNS_RESOLVER1, DNS_RESOLVER2, HOSTNAME, SCHEDULE_INTERVAL
     global DYNDNS_USERNAME, DYNDNS_UPDATER_KEY
 
     config_file = file
@@ -70,8 +70,11 @@ def init_config(file):
                 DYNDNS_USERNAME = value.strip('"')
             elif key == 'DYNDNS_UPDATER_KEY':
                 DYNDNS_UPDATER_KEY = value.strip('"')
+            elif key == 'SCHEDULE_INTERVAL':
+                interval = value.strip('"')
+                SCHEDULE_INTERVAL = int(interval) if interval.isnumeric() else SCHEDULE_INTERVAL
         except ValueError:
-            print(f"Error processing line: {line}")
+            print(f"[init_config] Error processing line: {line}")
 
     # Print the variables with colored text
     variable = (f'[init_config] Variable: '
@@ -79,6 +82,7 @@ def init_config(file):
                 f'DNS_RESOLVER1 = {DNS_RESOLVER1} | '
                 f'DNS_RESOLVER2 = {DNS_RESOLVER2} | '
                 f'HOSTNAME = {HOSTNAME} | '
+                f'SCHEDULE_INTERVAL = {SCHEDULE_INTERVAL} | '
                 f'dyndns_username = {DYNDNS_USERNAME} | '
                 f'dyndns_updater_key = {DYNDNS_UPDATER_KEY}')
 
