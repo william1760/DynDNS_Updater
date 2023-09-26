@@ -21,7 +21,8 @@ RUN pip install tzlocal
 
 COPY ./wrk/*.py /app/$FOLDER_NAME/
 COPY ./wrk/*.config /app/$FOLDER_NAME/
-RUN if [ ! -s /app/$FOLDER_NAME/main.config ]; then echo "HOSTNAME = \"$HOSTNAME\"" > /app/$FOLDER_NAME/main.config; else echo -e "\nHOSTNAME = \"$HOSTNAME\"" >> /app/$FOLDER_NAME/main.config; fi
+RUN if [ ! -s /app/$FOLDER_NAME/main.config ]; then echo "HOSTNAME = \"$HOSTNAME\"" >  \
+    /app/$FOLDER_NAME/main.config; else echo -e "\nHOSTNAME = \"$HOSTNAME\"" >> /app/$FOLDER_NAME/main.config; fi
 
 RUN chown -R worker:worker /app/$FOLDER_NAME/
 # Switch to the non-root user

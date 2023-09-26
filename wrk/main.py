@@ -218,6 +218,7 @@ if __name__ == '__main__':
     parse = argparse.ArgumentParser()
     parse.add_argument('--run-now', action="store_true", )
     parse.add_argument('--interval', type=str, required=False, default=SCHEDULE_INTERVAL, )
+    parse.add_argument('--hostname', type=str, required=False, default=HOSTNAME, )
     parse.add_argument('--force', action="store_true", )
     parse.add_argument('--status', action="store_true", )
     parse.add_argument('--setup', action="store_true", )
@@ -235,6 +236,12 @@ if __name__ == '__main__':
 
     if input_interval.isnumeric():
         schedule_interval = int(input_interval)
+
+    if args.hostname:
+        HOSTNAME = args.hostname
+        print(f'{HOSTNAME}')
+    else:
+        print(f'no update {HOSTNAME}')
 
     logging.debug(f'{args}')
 
