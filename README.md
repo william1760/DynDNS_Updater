@@ -21,15 +21,16 @@ Before running the script, make sure you have the following dependencies install
 
 ## Configuration
 
-Edit the `wrk/main.config` file with your desired dyndns domain.
+Edit the `dockerfile` file with your desired dyndns domain and review the time-zone.
 
 ```bash
-- `HOSTNAME`: Your DynDNS hostname.
+- ENV HOSTNAME="YOUR_DOMAIN.dyndns.org"
+- ENV TZ="Hongkong"
 ```
 
 ## Setup
 
-The DynDNS Updater operates within a Docker image, automatically checking for IP changes every 15 minutes by default. You have the option to manually build the image using the provided `dockerfile`, or utilize `DockerCtrl.py` for streamlined setup.
+The DynDNS Updater operates within a Docker image, automatically checking for IP changes every 15 minutes by default. You can manually build the image using the provided `dockerfile`, or utilize `DockerCtrl.py` for streamlined setup.
 
 Configuration settings are defined in the `DockerCtrl.config` file, including the `restart_policy` for the Docker container."
 
@@ -40,13 +41,13 @@ python DockerCtrl.py --build-image
 ## Usage
 
 ### First time running
-pre-storing login credentials in an encoded file named `Token.key` under the Docker for updating the latest Public IP on dyndns.org.
+Pre-storing login credentials in an encoded file named `Token.key` under the Docker for updating the latest Public IP on dyndns.org.
 
 ```bash
 python DockerCtrl.py --setup
 ```
 
-"DockerCtrl.py" can also manage the image.
+`DockerCtrl.py` can also manage the image.
 
 ### Command-line Arguments
 - `--build-image`: Build the Docker image.
@@ -79,7 +80,7 @@ python DockerCtrl.py --setup
 
 ## Running the Script Directly
 
-Of course, you can also run the python script `wrk/main.py` direclty without Docker. This provides flexibility for users who may not want to use Docker for some reason.
+Of course, you can also run the python script `wrk/main.py` directly without Docker. This provides flexibility for users who may not want to use Docker for some reason.
 
 ```bash
 python main.py
