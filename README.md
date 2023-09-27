@@ -1,6 +1,7 @@
 # DynDNS Updater
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/william1760/dyndns_updater/latest)
 ![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/william1760/dyndns_updater)
+![Docker Pull](https://img.shields.io/docker/pulls/william1760/dyndns_updater)
 
 ## Overview
 
