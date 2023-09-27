@@ -34,6 +34,3 @@ jobs:
           tags: |
             william1760/dyndns_updater:latest
           platforms: linux/amd64,linux/arm64/v8
-
-      - name: Check Docker build result
-        run: echo "Docker build result: ${{ steps.docker_build.outputs.result }}"
